@@ -24,13 +24,13 @@ public class Festivo {
     @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(name = "día")
+    @Column(name = "dia")
     private int dia;
 
     @Column(name = "mes")
     private int mes;
 
-    @Column(name = "días de pascua")
+    @Column(name = "diaspascua")
     private int diasPascua;
 
     //elegimos la cardinalidad, en este caso muchos tipos de festivo para un dia festivo, pues se puede dar la situacion
@@ -103,7 +103,5 @@ public class Festivo {
 
     
     
-    
-
 
 }

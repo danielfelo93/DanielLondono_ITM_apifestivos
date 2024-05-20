@@ -19,7 +19,7 @@ public class Tipo {
     @Column(name = "id")
     private int id;
     
-    @Column(name = "tipo", length = 100, nullable = false)
+    @Column(name = "tipo")
     private String tipo;
 
     public Tipo() {
