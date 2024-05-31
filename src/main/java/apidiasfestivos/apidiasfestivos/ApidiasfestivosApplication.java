@@ -12,13 +12,8 @@ public class ApidiasfestivosApplication {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(ApidiasfestivosApplication.class, args);
 
-		/* Date domingoRamos = FestivoServicio.getDomingoRamos(año);
-		Date domingoPascua = FestivoServicio.agregarDias(domingoRamos, 7);
-		Date juevesSanto = FestivoServicio.agregarDias(domingoPascua,-3);
-		Date viernesSanto = FestivoServicio.agregarDias(domingoPascua,-2);
-		Date ascencionSeñor = FestivoServicio.siguienteLunes(FestivoServicio.agregarDias(domingoPascua, 40));
-		Date corpusChristi = FestivoServicio.siguienteLunes(FestivoServicio.agregarDias(domingoPascua, 61));
-		Date sagradoCorazon = FestivoServicio.siguienteLunes(FestivoServicio.agregarDias(domingoPascua, 68)); */
+		//para preguntar en postmann es asi: http://localhost:8080/api/festivos/esFestivo/2/4?ano=2021
+		//									 donde: servidor		direccion	metodo	 dia/mes parametro año asi: ?ano=
 
 	}
 

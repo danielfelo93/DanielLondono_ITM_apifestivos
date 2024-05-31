@@ -15,7 +15,9 @@ public interface IFestivoServicio {
 
     public Festivo obtener(int dia, int mes);
 
-    public Boolean esFestivo(int dia, int mes);
+    /* public Boolean esFestivo(int dia, int mes); */
+
+    public Boolean esFestivo(int dia, int mes, int ano);
     
 }
 

@@ -34,10 +34,15 @@ public class FestivoControlador {
     }
 
     
-    @RequestMapping(value = "/esFestivo/{dia}/{mes}", method = RequestMethod.GET)
+    /* @RequestMapping(value = "/esFestivo/{dia}/{mes}", method = RequestMethod.GET)
     public boolean esFestivo(@PathVariable int dia, @PathVariable int mes) {
         return servicio.esFestivo(dia, mes);
-    }
+    } */
+
+    @RequestMapping(value = "/esFestivo/{dia}/{mes}", method = RequestMethod.GET)
+public boolean esFestivo(@PathVariable int dia, @PathVariable int mes, @RequestParam int ano) {
+    return servicio.esFestivo(dia, mes, ano);
+}
 } 
 
 
