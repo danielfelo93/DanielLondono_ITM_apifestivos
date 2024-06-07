@@ -1,5 +1,4 @@
 package apidiasfestivos.apidiasfestivos.core.interfaces.servicios;
-//import java.util.Optional;
 import java.util.List;
 
 //import org.springframework.data.jpa.repository.Query;
@@ -8,12 +7,15 @@ import java.util.List;
 //import org.springframework.data.jpa.repository.Query;
 
 import apidiasfestivos.apidiasfestivos.core.dominio.Festivo;
+import apidiasfestivos.apidiasfestivos.core.dominio.FestivoCalculado;
 
 public interface IFestivoServicio {
 
     public List<Festivo> listar();
 
-    public Festivo obtener(int dia, int mes);
+    public List<FestivoCalculado> listarAno(int ano);
+
+    public Festivo obtener(int dia, int mes);/*  */
 
     /* public Boolean esFestivo(int dia, int mes); */
 

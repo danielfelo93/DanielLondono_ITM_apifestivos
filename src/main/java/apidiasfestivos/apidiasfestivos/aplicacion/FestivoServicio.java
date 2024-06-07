@@ -1,4 +1,5 @@
 package apidiasfestivos.apidiasfestivos.aplicacion;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -6,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import apidiasfestivos.apidiasfestivos.core.dominio.Festivo;
+import apidiasfestivos.apidiasfestivos.core.dominio.FestivoCalculado;
 import apidiasfestivos.apidiasfestivos.core.interfaces.repositorios.IFestivoRepositorio;
 import apidiasfestivos.apidiasfestivos.core.interfaces.servicios.IFestivoServicio;
 
@@ -23,6 +25,7 @@ public class FestivoServicio implements IFestivoServicio{
         return repositorio.findAll();
     }
 
+    
     public static Date getDomingoRamos(int año){
         int a = año % 19;
         int b = año % 4;
@@ -116,70 +119,6 @@ public class FestivoServicio implements IFestivoServicio{
     }
 
 
-
-
-    //
-    //metodo es festivo original sin pedir el año
-    //
-    /* @Override
-    public Boolean esFestivo(int dia, int mes) {
-        //validarFecha(dia, mes); // Validar la fecha antes de continuar
-        Festivo festivo = repositorio.obtener(dia, mes);
-    
-        if (festivo != null && festivo.getIdtipo().getId() == 1) {
-            return true; // Es un festivo fijo
-        } else {
-            // Verificar si hay algún festivo tipo 2 que se traslade al lunes
-            List<Festivo> festivos = repositorio.findAll(); // Método para obtener todos los festivos
-            for (Festivo f : festivos) {
-                if (f.getIdtipo().getId() == 2) {
-                    
-                    Date fechaFestivo = createDate(f.getDia(), f.getMes());
-                    Date siguienteLunes = siguienteLunes(fechaFestivo);
-
-                    // Crear una instancia de Calendar para obtener el año actual
-                    Calendar calendario = Calendar.getInstance();
-                    calendario.setTime(siguienteLunes);
-                    int diaLunes = calendario.get(Calendar.DAY_OF_MONTH);
-                    int mesLunes = calendario.get(Calendar.MONTH) + 1; // Mes en Calendar es 0-indexed
-                    if (diaLunes == dia && mesLunes == mes) {
-                        return true;
-                    }
-                } else if (f.getIdtipo().getId() == 3) {
-
-                    // Crear una instancia de Calendar para obtener el año actual
-                    Calendar calendario = Calendar.getInstance();
-                    int año = calendario.get(Calendar.YEAR);
-                    Date domingoPascua = agregarDias(getDomingoRamos(año), 7);
-                    Date fechaFestivo = agregarDias(domingoPascua, f.getDiasPascua());
-
-                    calendario.setTime(fechaFestivo);
-                    int diaFestivo = calendario.get(Calendar.DAY_OF_MONTH);
-                    int mesFestivo = calendario.get(Calendar.MONTH) + 1; // Mes en Calendar es 0-indexed
-                    if (diaFestivo == dia && mesFestivo == mes) {
-                        return true;
-                    }
-                } else if (f.getIdtipo().getId() == 4) {
-
-                    // Crear una instancia de Calendar para obtener el año actual
-                    Calendar calendario = Calendar.getInstance();
-                    int año = calendario.get(Calendar.YEAR);
-                    Date domingoPascua = agregarDias(getDomingoRamos(año), 7);
-                    Date fechaFestivo = siguienteLunes(agregarDias(domingoPascua, f.getDiasPascua()));
-                    calendario.setTime(fechaFestivo);
-                    int diaFestivo = calendario.get(Calendar.DAY_OF_MONTH);
-                    int mesFestivo = calendario.get(Calendar.MONTH) + 1; // Mes en Calendar es 0-indexed
-                    if (diaFestivo == dia && mesFestivo == mes) {
-                        return true;
-                    } 
-                }
-            }
-        }
-    
-    return false; // No es festivo
-    } */
-
-
     public Date createDate(int dia, int mes, int ano) {
         Calendar calendario = Calendar.getInstance();
         calendario.set(Calendar.YEAR, ano);
@@ -190,40 +129,54 @@ public class FestivoServicio implements IFestivoServicio{
 
 
     //
-    //metodo crear date original sin pedir el año
+    //metodo listar por año
     //
-    /* public Date createDate(int dia, int mes) {
-        // Crear una instancia de Calendar para obtener el año actual
-        Calendar calendario = Calendar.getInstance();
-
-        // Establecer la fecha según los parámetros
-        calendario.set(Calendar.MONTH, mes - 1); // Restar 1 porque los meses son base 0 en Calendar
-        calendario.set(Calendar.DAY_OF_MONTH, dia);
+    public List<FestivoCalculado> listarAno(int ano) {
+        List<FestivoCalculado> festivosAno = new ArrayList<>();
+        List<Festivo> festivos = repositorio.findAll(); // Método para obtener todos los festivos
         
-        // Obtener un objeto Date a partir del Calendar
-        return calendario.getTime();
-    } */
-
-    //
-    //intento fallido de try catch para fechas no validas
-    //
-    /* public static void validarFecha(int dia, int mes) throws FechaNoValidaExcepcion {
-        if (mes < 1 || mes > 12) {
-            throw new FechaNoValidaExcepcion("Fecha no válida");
+        for (Festivo f : festivos) {
+            String nombreFestivo = f.getNombre(); // Nombre del festivo
+            
+            int diaCalculado = -1; // Día calculado
+            int mesCalculado = -1; // Mes calculado
+            
+            if (f.getIdtipo().getId() == 1) {
+                // Festivo fijo
+                diaCalculado = f.getDia();
+                mesCalculado = f.getMes();
+            } else if (f.getIdtipo().getId() == 2) {
+                // Festivo tipo 2 que se traslada al lunes
+                Date fechaFestivo = createDate(f.getDia(), f.getMes(), ano);
+                Date siguienteLunes = siguienteLunes(fechaFestivo);
+                Calendar calendario = Calendar.getInstance();
+                calendario.setTime(siguienteLunes);
+                diaCalculado = calendario.get(Calendar.DAY_OF_MONTH);
+                mesCalculado = calendario.get(Calendar.MONTH) + 1; // Mes en Calendar es 0-indexed
+            } else if (f.getIdtipo().getId() == 3) {
+                // Festivo tipo 3 basado en Pascua
+                Date domingoPascua = agregarDias(getDomingoRamos(ano), 7);
+                Date fechaFestivo = agregarDias(domingoPascua, f.getDiasPascua());
+                Calendar calendario = Calendar.getInstance();
+                calendario.setTime(fechaFestivo);
+                diaCalculado = calendario.get(Calendar.DAY_OF_MONTH);
+                mesCalculado = calendario.get(Calendar.MONTH) + 1; // Mes en Calendar es 0-indexed
+            } else if (f.getIdtipo().getId() == 4) {
+                // Festivo tipo 4 basado en Pascua que se traslada al lunes
+                Date domingoPascua = agregarDias(getDomingoRamos(ano), 7);
+                Date fechaFestivo = siguienteLunes(agregarDias(domingoPascua, f.getDiasPascua()));
+                Calendar calendario = Calendar.getInstance();
+                calendario.setTime(fechaFestivo);
+                diaCalculado = calendario.get(Calendar.DAY_OF_MONTH);
+                mesCalculado = calendario.get(Calendar.MONTH) + 1; // Mes en Calendar es 0-indexed
+            }
+            
+            // Agregar la información del festivo a la lista
+            festivosAno.add(new FestivoCalculado(nombreFestivo, diaCalculado, mesCalculado));
         }
-
-        Calendar calendario = Calendar.getInstance();
-        calendario.setLenient(false); // Establece el modo estricto de validación de fechas
-        try {
-            calendario.set(Calendar.MONTH, mes - 1); // Restar 1 porque los meses son base 0 en Calendar
-            calendario.set(Calendar.DAY_OF_MONTH, dia);
-            calendario.getTime(); // Intentar obtener la fecha para activar la validación
-        } catch (Exception e) {
-            throw new FechaNoValidaExcepcion("Fecha no válida");
-        }
-    } */
-
-
+        
+        return festivosAno;
+    }
 } 
 
    
